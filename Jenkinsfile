@@ -41,7 +41,7 @@ pipeline {
         stage("SonarQube Analysis") {
             steps {
                 script{
-                    withSonarQubeEnv(credentialsId: 'Jenkins-Sonar') {
+                    withSonarQubeEnv(credentialsId: 'jenkins-sonar') {
                         sh "mvn sonar:sonar"
                     }
                 }
@@ -51,7 +51,7 @@ pipeline {
         stage("Quality Gate") {
             steps {
                 script{
-                    waitForQualityGate abortPipeline: false, credentialsId: 'Jenkins-Sonar'
+                    waitForQualityGate abortPipeline: false, credentialsId: 'jenkins-sonar'
                 }
             }
         }
@@ -78,16 +78,6 @@ pipeline {
                }
             }
         }
-
-        stage('Cleanup Artifacts') {
-            steps {
-                scripts {
-                    sh "docker rmi ${IMAGE_NAME}:${IMAGE_TAG}"
-                    sh "docker rmi ${IMAGE_NAME}:latest"
-                }
-            }
-        }
-
 
     }
 }
