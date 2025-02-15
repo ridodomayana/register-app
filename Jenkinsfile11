@@ -1,35 +1,35 @@
 pipeline {
-    agent { label 'Slave'}
+    agent any
     tools {
-        jdk 'Java17'
-        maven 'maven3'
+        jdk 'jdk17'
+        maven 'maven'
     }
     environment {
-        APP_NAME = "register-app-pipeline"
+        S3_BUCKET = 'ebsproject02-14'
+        ARTIFACT_NAME = 'webapp.war'
+        WORKSPACE_DIR = "${env.WORKSPACE}"  // Define Jenkins workspace path
     }
-    
-    stages{
-        stage("Cleanup Workspace") {
+    stages {
+        stage('Debug Workspace') {
             steps {
-                cleanWs()
+                sh "echo 'Jenkins workspace path: ${WORKSPACE}'"
+                sh "ls -l ${WORKSPACE}"  // Check directory contents
             }
         }
-
-        stage("Checkout from SCM") {
+        stage('Checkout') {
             steps {
-                git branch: 'main', credentialsId: 'github', url: 'https://github.com/ridodomayana/register-app.git'
+                git branch: 'main', url: 'https://github.com/ridodomayana/register-app.git'
             }
         }
-
-        stage("Build Application") {
+        stage('Build') {
             steps {
-                sh "mvn clean package"
+                sh 'mvn clean package'
             }
         }
-
-        stage("Test Application") {
+        stage('Upload to S3') {
             steps {
-                sh "mvn test"
+                sh "ls -l ${WORKSPACE_DIR}/webapp/target/"  // Debug: Check if the artifact exists
+                sh "aws s3 cp ${WORKSPACE_DIR}/webapp/target/${ARTIFACT_NAME} s3://${S3_BUCKET}/"
             }
         }
     }
