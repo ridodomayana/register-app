@@ -1,0 +1,17 @@
+pipeline {
+    agent any
+    tools {
+        jdk 'java17'
+        maven 'maven'
+    }
+        stage('Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/ridodomayana/register-app.git'
+            }
+        }
+        stage('Build') {
+            steps {
+                sh 'mvn clean install'
+            }
+        }
+}
