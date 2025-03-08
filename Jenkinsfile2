@@ -4,6 +4,7 @@ pipeline {
         jdk 'java17'
         maven 'maven'
     }
+    stages {
         stage('Checkout') {
             steps {
                 git branch: 'main', url: 'https://github.com/ridodomayana/register-app.git'
@@ -11,7 +12,8 @@ pipeline {
         }
         stage('Build') {
             steps {
-                sh 'mvn clean install'
+                sh 'mvn clean package'
             }
         }
+    }
 }
