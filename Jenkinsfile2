@@ -23,7 +23,7 @@ pipeline {
         stage('Upload Artifact to S3') {
             steps {
                 script {
-                    def artifact = sh(script: "find / -name '*.war'", returnStdout: true).trim()
+                    def artifact = sh(script: "find -name '*.war'", returnStdout: true).trim()
                     sh "aws s3 cp ${artifact} s3://${S3_BUCKET}/"
                 }
             }
